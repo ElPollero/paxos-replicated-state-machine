@@ -1,0 +1,88 @@
+//
+// Protocol buffers definition for DidaMeetings Paxos Service
+//
+syntax = "proto3";
+package didameetings;
+
+message PhaseOneRequest {
+  int32 instance        = 1;
+  int32 requestballot	= 2;
+  // Log recovery fields
+  bool request_log_recovery = 3;     // Se true, solicita logs de instâncias anteriores
+  int32 from_instance = 4;           // Instância a partir da qual queremos logs (opcional)
+}
+
+message PhaseOneReply {
+  int32 instance        = 1;
+  int32 serverid        = 2;
+  int32 requestballot	= 3;
+  bool  accepted 	= 4;
+  int32 value           = 5;
+  int32 valballot       = 6;
+  int32 maxballot       = 7;
+  int32 maxdecided      = 8;
+  // Log recovery fields
+  repeated InstanceLog logs = 9;  // Complete log entries when log recovery is requested
+}
+
+message PhaseTwoRequest {
+  int32 instance        = 1;
+  int32 requestballot   = 2;
+  int32 value           = 3;
+}
+
+message PhaseTwoReply {
+  int32 instance        = 1;
+  int32 serverid        = 2;
+  int32 requestballot   = 3;
+  bool  accepted        = 4;
+  int32 maxballot       = 5;
+}
+
+message LearnRequest {
+  int32 instance   = 1;
+  int32 ballot     = 2;
+  int32 value      = 3;
+}
+
+message LearnReply {
+  int32 instance   = 1;
+  int32 ballot     = 2;
+}
+
+message InstanceLog {
+    int32 instance = 1;
+    int32 highest_accepted_ballot = 2;
+    int32 accepted_value = 3;  // -1 se nunca aceitou nada
+}
+
+// Fast Paxos messages for direct-to-acceptor proposals (blue operations)
+message fastTopicRequest {
+  int32 instance        = 1;
+  int32 ballot          = 2;  
+  int32 value           = 3;
+  int32 client_id       = 4;  // To identify the proposing client
+  int32 request_id      = 5;  // Original request ID
+}
+
+message fastTopicReply {
+  int32 instance        = 1;
+  int32 serverid        = 2;
+  int32 ballot          = 3;
+  bool  accepted        = 4;
+  int32 value           = 5;   // The value that was accepted (may differ from proposal)
+  bool  conflict        = 6;   // True if there was a collision requiring fallback
+}
+
+service DidaMeetingsPaxosService {
+  rpc phaseone (PhaseOneRequest) returns (PhaseOneReply);
+  rpc phasetwo (PhaseTwoRequest) returns (PhaseTwoReply);
+  rpc learn (LearnRequest) returns (LearnReply);
+  rpc fastTopic (fastTopicRequest) returns (fastTopicReply);
+}
+
+
+
+
+
+

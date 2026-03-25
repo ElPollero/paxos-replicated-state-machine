@@ -1,0 +1,35 @@
+//
+// Protocol buffers definition for DidaMeetings Master Service
+//
+syntax = "proto3";
+package didameetings;
+
+message NewBallotRequest {
+  int32 reqid           = 1;
+  int32 newballot       = 2;
+  int32 completedballot = 3;
+}
+
+message NewBallotReply {
+  int32 reqid           = 1;
+  int32 completedballot = 2;
+}
+
+message SetDebugRequest {
+  int32 reqid  = 1;
+  int32 mode   = 2;
+}
+
+message SetDebugReply {
+  int32 reqid   = 1;
+  bool ack      = 2;
+}
+
+service DidaMeetingsMasterService {
+  rpc newballot (NewBallotRequest) returns (NewBallotReply);
+  rpc setdebug (SetDebugRequest) returns (SetDebugReply);
+}
+
+
+
+

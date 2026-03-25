@@ -1,0 +1,69 @@
+//
+// Protocol buffers definition for DidaMeetings Main Service
+//
+syntax = "proto3";
+package didameetings;
+
+message OpenRequest {
+  int32 reqid      = 1;
+  int32 meetingid  = 2;
+}
+
+message OpenReply {
+  int32 reqid   = 1;
+  bool  result	= 2;
+  int32 logical_timestamp = 3;  // Timestamp when command was executed
+}
+
+message AddRequest {
+  int32 reqid         = 1;
+  int32 meetingid     = 2;
+  int32 participantid = 3;
+}
+
+message AddReply {
+  int32 reqid   = 1;
+  bool  result	= 2;
+  int32 logical_timestamp = 3;  // Timestamp when command was executed
+}
+
+message TopicRequest {
+  int32 reqid         = 1;
+  int32 meetingid     = 2;
+  int32 participantid = 3;
+  int32 topicid       = 4;
+  int32 client_timestamp = 5;  // Client's last Multi-Paxos timestamp
+}
+
+message TopicReply {
+  int32 reqid   = 1;
+  bool  result	= 2;
+}
+
+message CloseRequest {
+  int32 reqid      = 1;
+  int32 meetingid  = 2;
+}
+
+message CloseReply {
+  int32 reqid   = 1;
+  bool  result	= 2;
+}
+
+message DumpRequest {
+  int32 reqid      = 1;
+}
+
+message DumpReply {
+  int32 reqid   = 1;
+  bool  result	= 2;
+}
+
+service DidaMeetingsMainService {
+  rpc open (OpenRequest) returns (OpenReply);
+  rpc add (AddRequest) returns (AddReply);
+  rpc topic (TopicRequest) returns (TopicReply);
+  rpc close (CloseRequest) returns (CloseReply);
+  rpc dump (DumpRequest) returns (DumpReply);
+}
+
